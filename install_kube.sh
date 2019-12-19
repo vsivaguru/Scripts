@@ -24,9 +24,15 @@ sudo systemctl status docker.service
 
 sleep 5
 
-read -p "Appuyer sur une touche pour continuer ..."
+if [ test ]
+then
+        echo "C'est vrai"
+fi
 
 #Création et ajout d'un user utilisés par RKE pour administrer les nœud du cluster
+echo "Création et ajout d'un user utilisés par RKE pour administrer les nœud du cluster"
+read -p "Appuyer sur une touche pour continuer ..."
+
 useradd manager
 usermod -aG docker manager
 mkdir -p /home/manager/.ssh
