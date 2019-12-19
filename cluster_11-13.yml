@@ -1,0 +1,26 @@
+kubernetes_version: "v1.13.7-rancher1-1"
+
+authorization:
+  mode: rbac
+
+network:
+  plugin: calico
+  options:
+    flannel_iface: ens160
+
+nodes:
+  - address: 10.129.150.104
+    user: manager
+    role:
+      - controlplane
+      - etcd
+      - worker
+    labels:
+      app: ingress
+    hostname_override: clasyn-rk11-kub.adm.fr.clara.net
+    ssh_key_path: ~/.ssh/id_rsa
+
+ingress:
+    provider: nginx
+    node_selector:
+      app: ingress
