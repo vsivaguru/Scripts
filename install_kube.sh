@@ -59,8 +59,8 @@ usermod -aG docker manager
 mkdir -p /home/manager/.ssh
 
 #vérifier le manager est bien parti de group docker
-getent group docker | grep manager | wc -l
-checkResult $? 1 "Manager n'appartient pas au groupe root"
+MANAGER=`getent group docker | grep manager | wc -l`
+checkResult $MANAGER 1 "Manager n'appartient pas au groupe root"
 
 # Add apt repo file for Kubernetes
 echo "[TASK 5] Add apt repo file for Kubernetes"
