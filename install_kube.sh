@@ -30,8 +30,9 @@ sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent softwa
 date
 echo echo "[TASK 2] installation de docker" ;
 sleep 5
-curl https://releases.rancher.com/install-docker/18.06.sh | sh
-
+#https://rancher.com/docs/rke/latest/en/os/#opening-port-tcp-6443-using-iptables
+#curl https://releases.rancher.com/install-docker/18.06.sh | sh
+curl https://releases.rancher.com/install-docker/18.09.2.sh | sh
 
 # Enable docker service
 echo "[TASK 3] Enable and start docker service"
