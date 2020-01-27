@@ -11,9 +11,8 @@
 
 # Variables a modifier #
 Port="5432"
-Client="siclaranetfr-gedplateformes"
-#clacon-ed01.adm.fr.clara.net
-Host=10.129.60.89
+#hostname
+Host=IP
 PGDUMPDIR=/data/temp/confluence_backup/
 #PGDUMPDIR=/data/temp/
 error=0
