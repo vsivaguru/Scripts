@@ -1,3 +1,40 @@
+#!/bin/sh
+
+MASTER=$(. /etc/profile.d/postgresql.sh ; psql -hclacon-p-pgpool-vip.adm.fr.clara.net -p 9999 -U postgres -c "show pool_nodes" | awk -F "|" '/primary/{gsub(/ /, "", $0); print $2".adm.fr.clara.net"}')
+
+SLAVE=$(. /etc/profile.d/postgresql.sh ; psql -hclacon-p-pgpool-vip.adm.fr.clara.net -p 9999 -U postgres -c "show pool_nodes" | awk -F "|" '/standby/{gsub(/ /, "", $0); print $2".adm.fr.clara.net"}')
+
+SEUIL_NB_MINUTES_RETARD=30
+
+SCRIPT_LOG_DIR=/data/logs/postgresql/replication/log_check_postgresql_replication
+SCRIPT_LOG_FILE=${SCRIPT_LOG_DIR}/check_postgresql_repli__`date +%Y_%m_%d`.log
+
+[ ! -d ${SCRIPT_LOG_DIR} ] && mkdir ${SCRIPT_LOG_DIR} && LogInfo "${SCRIPT_LOG_DIR} does not exist" && exit 1
+
+LogInfo() {
+    local timestamp=`date "+%Y_%m_%d__%H:%M:%S"`
+    echo ${timestamp} $1 >> ${SCRIPT_LOG_FILE}
+}
+
+IS_MASTER() {
+    MASTERHOSTNAME=$(su - postgres -c "ssh -o StrictHostKeyChecking=no -q postgres@${MASTER} hostname")
+    MYHOSTNAME=`hostname`
+    if [ "${MASTERHOSTNAME}" = "${MYHOSTNAME}" ];then
+        echo "replication OK, you are on master so you have to check on slave"
+        LogInfo "replication OK, you are on master"
+        LogInfo "Fin excution du check replication PostgreSQL"
+        exit 1
+    fi
+}
+
+# AVEC PGPool, si le slave n'est pas renseigné (récupération dynamique de la liste des slaves)
+# cela signifie que l'on est sur le master. Mais il aussi faut prendre en compte le cas où l'on a plusieurs slaves.
+# Dans ce cas, le script de check n'est applicable que depuis les slaves.
+# Pour ne pas lever d'alarme sur le master, le check ne fait que remonter un OK.
+# Le check replication sera donc fait depuis les slaves.
+# SANS PGPool, cette variable ne devrait jamais être vide.
+if [ -z "${SLAVE}" ]
+  then
     echo "replication OK, you use pgpool and are on primary"
     LogInfo "No slave set. Do not check replication"
     LogInfo "replication OK, you use pgpool and are on primary"
